@@ -1,0 +1,10 @@
+
+## Interface: 100002
+## Author: Arkaan
+## Version: 1.00
+## Title: Custom Item Notes
+## Notes: Allows the creation of custom notes to be added to the tooltip
+## X-Website: https://www.curseforge.com/wow/addons/guild-roster-manager
+## SavedVariables: CIN_Save
+
+CIN_Core.lua
