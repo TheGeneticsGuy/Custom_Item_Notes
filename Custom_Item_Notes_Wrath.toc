@@ -1,0 +1,9 @@
+
+## Interface: 30400
+## Author: Arkaan
+## Version: 1.00
+## Title: Custom Item Notes
+## Notes: Allows the creation of custom notes to be added to the tooltip
+## SavedVariables: CIN_Save
+
+CIN_Core.lua
