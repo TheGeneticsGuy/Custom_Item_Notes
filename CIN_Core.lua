@@ -20,7 +20,7 @@ SLASH_CIN1 = '/cin';
 -- What it Does:    Adds the given player input note to the save file
 -- Purpose:         To save between sessions the given notes.
 CIN.AddNote = function ( note , position , itemID )
-    local ID = itemID or select ( 3 , GameTooltip:GetItem() );
+    local ID = itemID or CIN.GetItemID();
 
     if ID then
         local id = tostring (ID);
@@ -46,7 +46,7 @@ end
 -- What it Does:    Allows the player to edit a given note with a new one without needing to delete and add again
 -- Purpose:         One less step for the efficient user.
 CIN.EditNote = function ( newNote , position , itemID )
-    local ID = itemID or select ( 3 , GameTooltip:GetItem() );
+    local ID = itemID or CIN.GetItemID();
 
     if ID then
         local id = tostring (ID);
@@ -68,7 +68,7 @@ end
 -- What it Does:    Deletes the most recent set note on the item, or by given number.
 -- Purpose:         To be able to allow player control of notes added.
 CIN.DeleteNote = function ( position , itemID )
-    local ID = itemID or select ( 3 , GameTooltip:GetItem() );
+    local ID = itemID or CIN.GetItemID();
 
     if ID then
         local id = tostring (ID);
@@ -93,7 +93,7 @@ end
 -- What it Does:    Removes all the notes of the given item, be it a given itemID, or by mouseover of item
 -- Purpose:         Easy to clear mass notes
 CIN.ClearAllNotes = function ( itemID )
-    local ID = itemID or select ( 3 , GameTooltip:GetItem() );
+    local ID = itemID or CIN.GetItemID();
 
     if ID then
         local id = tostring (ID);
@@ -153,11 +153,11 @@ end
 
 -- Quickly parse item ID
 CIN.GetItemID = function()
-    local id;
+    local link , id = select ( 2 , GameTooltip:GetItem() );
 
-    if GameTooltip:IsShown() then
-		id = select ( 3 , GameTooltip:GetItem() );
-    end
+    if not id and link then
+        id = string.match ( link , "|Hitem:(%d+):" );
+    end	
 
     return id;
 end
@@ -306,9 +306,13 @@ CIN.ActivateAddon = function ( _ , event , addon )
 end
 
 -- New Tooltip handler logic as of 10.0.2
-TooltipDataProcessor.AddTooltipPostCall ( Enum.TooltipDataType.Item , function ( GameTooltip )
-    CIN.SetTooltipNote();
-end)
+if TooltipDataProcessor then
+    TooltipDataProcessor.AddTooltipPostCall ( Enum.TooltipDataType.Item , function ( GameTooltip )
+        CIN.SetTooltipNote();
+    end);
+else
+    GameTooltip:HookScript ( "OnTooltipSetItem" , CIN.SetTooltipNote );
+end
 
 -- Initialize the first frames as game is being loaded.
 CIN.Initialization = CreateFrame ( "Frame" );
