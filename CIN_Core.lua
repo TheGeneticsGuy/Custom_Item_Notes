@@ -196,7 +196,7 @@ end
 -- Purpose:         Ease of handling slash commands for user input.
 CIN.ParseInput= function ( input )
 
-    input = string.lower ( CIN.Trim( input ) );
+    input = CIN.Trim( input )
 
     local command, remainingNote = string.match ( input , "(%a+)%s+(.+)" );
     if not command then
@@ -219,7 +219,7 @@ CIN.ParseInput= function ( input )
         number = tonumber ( number );
     end
 
-    return command , CIN.Trim (text), number;
+    return string.lower ( command ) , CIN.Trim (text), number;
 end
 
 -- Method:          CIN.SlashCommandHelp()
