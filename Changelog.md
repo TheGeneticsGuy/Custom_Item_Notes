@@ -1,4 +1,4 @@
-**1.04 Release - July 11th, 2023**
+**1.05 Release - July 11th, 2023**
 
 * 10.1.5 Compatibility as well as Wrath 4.3.2 compatibility
 
