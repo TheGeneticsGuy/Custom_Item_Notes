@@ -1,3 +1,8 @@
+**1.06 Release - September 5th, 2023**
+
+* 10.1.7 Compatibility as well as Classic Era  1.14.4 Hardcore mode compatibility
+
+
 **1.05 Release - July 11th, 2023**
 
 * 10.1.5 Compatibility as well as Wrath 4.3.2 compatibility
