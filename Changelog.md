@@ -1,7 +1,15 @@
+
+
+
+**1.07 Release - November 7th, 2023**
+
+*Compatibility release for 10.2 DF*
+
+*Compatibility release for 3.4.3 Wrath Classic*
+
 **1.06 Release - September 5th, 2023**
 
 * 10.1.7 Compatibility as well as Classic Era  1.14.4 Hardcore mode compatibility
-
 
 **1.05 Release - July 11th, 2023**
 
