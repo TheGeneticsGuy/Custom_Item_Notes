@@ -1,5 +1,7 @@
 
+**1.08 Release - January 16th, 2024**
 
+* Compatibility Release for 10.2.5 DF
 
 **1.07 Release - November 7th, 2023**
 
