@@ -180,8 +180,10 @@ end
 -- What it Does:    Adds the notes to end of tooltip
 -- Purpose:         To be able to add notes to tooltips easily.
 CIN.BuildTooltip = function ( notes )
-    GameTooltip:AddLine ( " " );
     for i = 1 , #notes do
+        if i == 1 then
+            GameTooltip:AddLine ( " " );
+        end
         GameTooltip:AddLine ( "|CFF1DC5D3Note" .. i .. ":|r " .. notes[i] , 1 , 1 , 1 );
     end
 end

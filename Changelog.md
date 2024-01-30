@@ -1,4 +1,8 @@
 
+**1.09 Release - January 30th, 2024**
+
+* It appears there is an extra space added at the bottom of tooltips even if all messages deleted. This no longer should happen.
+
 **1.08 Release - January 16th, 2024**
 
 * Compatibility Release for 10.2.5 DF
