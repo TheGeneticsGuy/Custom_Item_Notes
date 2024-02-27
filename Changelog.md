@@ -1,4 +1,8 @@
 
+**1.10 Release - February 26th, 2024**
+
+* Adding Season of Discovery Season 2 compatibility
+
 **1.09 Release - January 30th, 2024**
 
 * It appears there is an extra space added at the bottom of tooltips even if all messages deleted. This no longer should happen.
