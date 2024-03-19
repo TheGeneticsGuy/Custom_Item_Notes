@@ -320,3 +320,5 @@ end
 CIN.Initialization = CreateFrame ( "Frame" );
 CIN.Initialization:RegisterEvent ( "ADDON_LOADED" );
 CIN.Initialization:SetScript ( "OnEvent" , CIN.ActivateAddon );
+
+

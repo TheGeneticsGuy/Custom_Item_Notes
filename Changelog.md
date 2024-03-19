@@ -1,4 +1,8 @@
 
+**1.11 Release - March 19th, 2024**
+
+* Adding patch 10.2.6 support.
+
 **1.10 Release - February 26th, 2024**
 
 * Adding Season of Discovery Season 2 compatibility
