@@ -1,7 +1,7 @@
 
-## Interface: 11501
+## Interface: 11502
 ## Author: Arkaan
-## Version: 1.11
+## Version: 1.12
 ## Title: Custom Item Notes
 ## Notes: Allows the creation of custom notes to be added to the tooltip
 ## SavedVariables: CIN_Save

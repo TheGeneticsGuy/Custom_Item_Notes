@@ -1,4 +1,8 @@
 
+**1.12 Release - April 18th, 2024**
+
+* Adding Classic Update support for SOD
+
 **1.11 Release - March 19th, 2024**
 
 * Adding patch 10.2.6 support.
