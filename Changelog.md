@@ -1,4 +1,8 @@
 
+**1.13 Release - May 2nd, 2024**
+
+* Updated for Classic Cata compatibility
+
 **1.12 Release - April 18th, 2024**
 
 * Adding Classic Update support for SOD
