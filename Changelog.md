@@ -1,3 +1,6 @@
+**1.14 Release - May 7th, 2024**
+
+* Updated for 10.2.7 Compatibility
 
 **1.13 Release - May 2nd, 2024**
 
