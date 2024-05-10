@@ -3,11 +3,10 @@
 
 CIN_Save = CIN_Save or {};
 
-local CIN = {};
+CIN = {};
 local CIN_G = {};
 
 CIN_G.addonName = "Custom_Item_Notes";
-
 
 -- Slash Commands
 SLASH_CIN1 = '/cin';
@@ -19,13 +18,19 @@ SLASH_CIN1 = '/cin';
 -- Method:          CIN.AddNote ( string , int , int )
 -- What it Does:    Adds the given player input note to the save file
 -- Purpose:         To save between sessions the given notes.
-CIN.AddNote = function ( note , position , itemID )
-    local ID = itemID or CIN.GetItemID();
+CIN.AddNote = function ( note , position , index )
+    local name = index;
+    local itemID;
 
-    if ID then
-        local id = tostring (ID);
+    if not name then 
+        name , itemID = CIN.GetItemNameAndID();
+    end
+
+    if name then
+        local id = tostring (name);
         if not CIN_Save[id] then
             CIN_Save[id] = {};
+            CIN_Save[id].itemID = tonumber ( itemID );
         end
 
         if #note > 255 then
@@ -46,10 +51,10 @@ end
 -- What it Does:    Allows the player to edit a given note with a new one without needing to delete and add again
 -- Purpose:         One less step for the efficient user.
 CIN.EditNote = function ( newNote , position , itemID )
-    local ID = itemID or CIN.GetItemID();
+    local name = itemID or CIN.GetItemNameAndID();
 
-    if ID then
-        local id = tostring (ID);
+    if name then
+        local id = tostring (name);
         if CIN_Save[id] then
             if CIN_Save[id][position] then
                 CIN_Save[id][position] = newNote;
@@ -68,16 +73,21 @@ end
 -- What it Does:    Deletes the most recent set note on the item, or by given number.
 -- Purpose:         To be able to allow player control of notes added.
 CIN.DeleteNote = function ( position , itemID )
-    local ID = itemID or CIN.GetItemID();
+    local name = itemID or CIN.GetItemNameAndID();
 
-    if ID then
-        local id = tostring (ID);
+    if name then
+        local id = tostring (name);
 
         if CIN_Save[id] then
         local number = position or #CIN_Save[id];
 
             if CIN_Save[id][number] then
                 table.remove ( CIN_Save[id] , number );
+
+                -- Wipe the memory index if no more notes.
+                if #CIN_Save[id] == 0 then
+                    CIN_Save[id] = nil;
+                end
             else
                 if #CIN_Save[id] > 1 then
                     print("Note not found. There are only " .. #CIN_Save[id] .. " notes set and you selected " .. number .. "." );
@@ -93,12 +103,12 @@ end
 -- What it Does:    Removes all the notes of the given item, be it a given itemID, or by mouseover of item
 -- Purpose:         Easy to clear mass notes
 CIN.ClearAllNotes = function ( itemID )
-    local ID = itemID or CIN.GetItemID();
+    local name = itemID or CIN.GetItemNameAndID();
 
-    if ID then
-        local id = tostring (ID);
+    if name then
+        local id = tostring (name);
         if CIN_Save[id] then
-            CIN_Save[id] = {};
+            CIN_Save[id] = nil;
         end
     end
 end
@@ -111,7 +121,7 @@ CIN.WrapNote = function ( note )
     local finalNote = "";
     local ind = 0;
 
-    if #note > 100 then
+    if #note > 80 then
 
         -- First Line
         tempNote = string.sub ( note , 100 );
@@ -150,26 +160,37 @@ end
 ----------------------
 -- NOTE LOADING LOGIC
 ----------------------
+CIN.GetItemQuality = function ( id )
+    quality , _ , _ , typeOfItem = select ( 3 , GetItemInfo( id ) );
+    return quality , typeOfItem;
+end
 
--- Quickly parse item ID
-CIN.GetItemID = function()
+-- Quickly parse item ID and name
+CIN.GetItemNameAndID = function()
     local link , id = select ( 2 , GameTooltip:GetItem() );
+    local name;
 
+    -- Classic ID will not be give on the GetItem() dump.
     if not id and link then
         id = string.match ( link , "|Hitem:(%d+):" );
-    end	
+    end
 
-    return id;
+    -- I want it to return nil if no item ID as that would indicate the tooltip is a non-item tooltip So only pulling name if valid.
+    if id and _G["GameTooltipTextLeft1"] then
+        name = _G["GameTooltipTextLeft1"]:GetText();
+    end
+
+    return name , id;
 end
 
 -- Logic handler for building tooltip
 CIN.SetTooltipNote = function()
 
     -- Ok, let's obtain the itemID.
-    local ID = CIN.GetItemID();
+    local name = CIN.GetItemNameAndID();
 
-    if ID then
-        local id = tostring (ID);
+    if name then
+        local id = tostring (name);
         if CIN_Save[id] then
             CIN.BuildTooltip ( CIN_Save[id] );
         end
@@ -241,14 +262,14 @@ SlashCmdList["CIN"] = function ( input )
     local errorMsg = "Please type '/cin help' for assistance.";
     local errorMsg2 = "Please mouse over an item first.";
     
-    local id = CIN.GetItemID();
+    local name = CIN.GetItemNameAndID();
 
     if not input or input == "" then
         print(errorMsg);
         return;
     end
 
-    if not id and string.lower ( CIN.Trim( input ) ) ~= "help" then
+    if not name and string.lower ( CIN.Trim( input ) ) ~= "help" then
         print(errorMsg2);
         return;
     end
@@ -286,8 +307,12 @@ SlashCmdList["CIN"] = function ( input )
     end
 end
 
+-- Method:          CIN.Initialize()
+-- What it Does:    Ensures that the core loadout of the addon doesn't occur until the events of logging in trigger
+-- Purpose:         Important to control load of data to be delayed in some cases.
 CIN.Initialize = function()
     -- Possibly for future use.
+    C_Timer.After ( 2 , CIN.PatchCheck )
 end
 
 -- Method:          CIN.ActivateAddon ( ... , string , string )
@@ -314,6 +339,29 @@ if TooltipDataProcessor then
     end);
 else
     GameTooltip:HookScript ( "OnTooltipSetItem" , CIN.SetTooltipNote );
+end
+
+---------------------
+-- TECHNICAL TOOLS --
+---------------------
+
+-- Method:          CIN.DeepCopyArray(array)
+-- What it Does:    Makes a Deep copy, including all children, recursively, so as to create a new memory reference of the array
+-- Purpose:         In Lua, you cannot just copy a table. It copies the reference and changes made to new table and references the memory to being the same, even if they have different variable names
+--                  So, to truly create a unique reference to an array, so if you edit one it doesn't edit both, you need to do a true copy. This basically creates a new empty array and imports each value
+--                  to the table.
+CIN.DeepCopyArray = function( tableToCopy )
+    local copy;
+    if type ( tableToCopy ) == 'table' then
+        copy = {};
+        for orig_key , orig_value in next , tableToCopy , nil do
+            copy [ CIN.DeepCopyArray ( orig_key ) ] = CIN.DeepCopyArray ( orig_value );     -- This recursive action is essentially taking every multi-D array value and it keeps digging til it builds every layer of multi-dimensional array
+        end
+        setmetatable ( copy , CIN.DeepCopyArray ( getmetatable ( tableToCopy ) ) );
+    else
+        copy = tableToCopy;         -- Imported data was not a table... just return orig. value - error protection
+    end
+    return copy;
 end
 
 -- Initialize the first frames as game is being loaded.

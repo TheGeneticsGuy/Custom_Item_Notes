@@ -1,3 +1,10 @@
+
+**1.15 Release - May 9th, 2024**
+
+* CIN no longer uses the itemID as the memory storage reference. The reason this decision was made is because it is more useful to include the string name. This will create a complication if you are using multiple clients, so if t his becomes an issue, I have a way to revert the database if needed, but I don't want to adjust to that yet. However, in the meory I am still storing the itemID in case it ever needs to be called on again and it will be absolutely necessary in the case of a localization effort.
+
+* When you clearAll of a note, or you delete the only existing note, the memory reference of the item will be deleted as it doesn't need to exist. Before it just left an empty table needlessly.
+
 **1.14 Release - May 7th, 2024**
 
 * Updated for 10.2.7 Compatibility
