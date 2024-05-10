@@ -5,6 +5,7 @@ CIN_Save = CIN_Save or {};
 
 CIN = {};
 local CIN_G = {};
+CIN_G.BuildVersion = select ( 4 , GetBuildInfo() )
 
 CIN_G.addonName = "Custom_Item_Notes";
 
@@ -185,7 +186,6 @@ end
 
 -- Logic handler for building tooltip
 CIN.SetTooltipNote = function()
-
     -- Ok, let's obtain the itemID.
     local name = CIN.GetItemNameAndID();
 
@@ -333,10 +333,8 @@ CIN.ActivateAddon = function ( _ , event , addon )
 end
 
 -- New Tooltip handler logic as of 10.0.2
-if TooltipDataProcessor then
-    TooltipDataProcessor.AddTooltipPostCall ( Enum.TooltipDataType.Item , function ( GameTooltip )
-        CIN.SetTooltipNote();
-    end);
+if TooltipDataProcessor and CIN_G.BuildVersion > 80000 then
+    TooltipDataProcessor.AddTooltipPostCall ( Enum.TooltipDataType.Item , CIN.SetTooltipNote );
 else
     GameTooltip:HookScript ( "OnTooltipSetItem" , CIN.SetTooltipNote );
 end
