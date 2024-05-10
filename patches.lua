@@ -38,7 +38,11 @@ end
 -- Method:          CIN_Patch.ConvertDBEntriesToStrings()
 -- What it Does:    Converts the existing database of itemIDs into their string names
 -- Purpose:         Updating the database to include differentiation of items based on the anme rather than the item ID as the item can vary based on upgrades but the base itemID doesn't change, which isn't helpful.
-CIN_Patch.ConvertDBEntriesToStrings = function()
+CIN_Patch.ConvertDBEntriesToStrings = function( repeatedCount )
+    repeatedCount = repeatedCount or 1;
+
+    local notConverted = 0;
+    
     for id in pairs ( CIN_Save ) do
         local itemID = tonumber (id)
         if itemID then
@@ -55,6 +59,9 @@ CIN_Patch.ConvertDBEntriesToStrings = function()
                     CIN_Save[name] = CIN.DeepCopyArray ( CIN_Save[id] );   -- Do a full copy to wipe all memory references
                     CIN_Save[name].itemID = tonumber(id);
                     CIN_Save[id] = nil;                                 -- Clear the old copy.
+                else
+                    -- Couldn't pull the ID for some reason
+                    notConverted = notConverted + 1;
                 end
             else
                 -- Fixing an existing bug where the reference was never removed if it has no notes
@@ -62,6 +69,18 @@ CIN_Patch.ConvertDBEntriesToStrings = function()
 
             end
         end
+    end
+
+    -- Adding some redundancy as sometimes the server won't update the item Info right away.
+    -- Gonna give it 5 tries to call to the server with 2 second interval. The reason why is because
+    -- I have found that most of the time server will refresh data within 1-2 seconds, but in some cases
+    -- the server takes as much as 10 seconds for items not yet cached. 
+    if notConverted > 0 and repeatedCount < 6 then
+        repeatedCount = repeatedCount + 1;
+        C_Timer.After ( 2 , function()
+            CIN_Patch.ConvertDBEntriesToStrings ( repeatedCount );
+        end);
+        return;
     end
 
     if not CIN_Save.VERSION then
