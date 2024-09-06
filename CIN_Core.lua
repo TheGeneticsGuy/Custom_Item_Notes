@@ -2,11 +2,10 @@
 -- Author: Arkaan (GenomeWhisperer on Github)
 
 CIN_Save = CIN_Save or {};
+CIN = {};       -- Global variable across all files
 
-CIN = {};
 local CIN_G = {};
 CIN_G.BuildVersion = select ( 4 , GetBuildInfo() )
-
 CIN_G.addonName = "Custom_Item_Notes";
 
 -- Slash Commands
@@ -23,7 +22,7 @@ CIN.AddNote = function ( note , position , index )
     local name = index;
     local itemID;
 
-    if not name then 
+    if not name then
         name , itemID = CIN.GetItemNameAndID();
     end
 
@@ -121,15 +120,16 @@ CIN.WrapNote = function ( note )
     local tempNote , tempNote2 = "" , "";
     local finalNote = "";
     local ind = 0;
+    local cap = 50;
 
-    if #note > 80 then
+    if #note > cap then
 
         -- First Line
-        tempNote = string.sub ( note , 100 );
+        tempNote = string.sub ( note , cap );
         ind = string.find ( tempNote , " " );
 
         if ind then
-            finalNote = string.sub ( note , 1 , ind + 100 - 1 ) .. "\n";    -- Remaining note is on the tempNote;
+            finalNote = string.sub ( note , 1 , ind + cap - 1 ) .. "\n";    -- Remaining note is on the tempNote;
             tempNote = string.sub ( tempNote , ind + 1 );                   -- Parse out what has been added
         else
             finalNote = note;
@@ -137,11 +137,11 @@ CIN.WrapNote = function ( note )
         end
 
         -- Moving on to 2nd line.
-        if #tempNote > 100 then
-            tempNote2 = string.sub ( tempNote , 100 );
+        if #tempNote > cap then
+            tempNote2 = string.sub ( tempNote , cap );
             ind = string.find ( tempNote2 , " " );
             if ind then
-                finalNote = finalNote .. string.sub ( tempNote , 1 , ind + 100 - 1 ) .. "\n"; -- Remaining note is on the tempNote;
+                finalNote = finalNote .. string.sub ( tempNote , 1 , ind + cap - 1 ) .. "\n"; -- Remaining note is on the tempNote;
                 finalNote = finalNote .. string.sub ( tempNote2 , ind + 1 );
             else
                 finalNote = finalNote .. tempNote;
@@ -173,7 +173,7 @@ CIN.GetItemNameAndID = function()
 
     -- Classic ID will not be give on the GetItem() dump.
     if not id and link then
-        id = string.match ( link , "|Hitem:(%d+):" );
+        id = string.match ( link , "|h%[[^%]]+%]" );
     end
 
     -- I want it to return nil if no item ID as that would indicate the tooltip is a non-item tooltip So only pulling name if valid.
@@ -186,13 +186,16 @@ end
 
 -- Logic handler for building tooltip
 CIN.SetTooltipNote = function()
-    -- Ok, let's obtain the itemID.
-    local name = CIN.GetItemNameAndID();
 
-    if name then
-        local id = tostring (name);
-        if CIN_Save[id] then
-            CIN.BuildTooltip ( CIN_Save[id] );
+    if not CIN.S().keyToSee or IsKeyDown ( CIN.S().keyToSeeName or "TAB" ) then
+        -- Ok, let's obtain the itemID.
+        local name = CIN.GetItemNameAndID();
+
+        if name then
+            local id = tostring (name);
+            if CIN_Save[id] then
+                CIN.BuildTooltip ( CIN_Save[id] );
+            end
         end
     end
 end
@@ -201,11 +204,27 @@ end
 -- What it Does:    Adds the notes to end of tooltip
 -- Purpose:         To be able to add notes to tooltips easily.
 CIN.BuildTooltip = function ( notes )
+
+    if #notes == 0 then
+        return;
+    end
+
+    local line = _G["GameTooltipTextLeft" .. GameTooltip:NumLines() ]:GetText();
+    local lastLine = "|CFF1DC5D3Note" .. #notes .. ":|r " .. notes[#notes];
+    local lineToAdd = "";
+
+    if line == lastLine then
+        return;
+    end
+
     for i = 1 , #notes do
+
+        lineToAdd = "|CFF1DC5D3Note" .. i .. ":|r " .. notes[i];
+
         if i == 1 then
             GameTooltip:AddLine ( " " );
         end
-        GameTooltip:AddLine ( "|CFF1DC5D3Note" .. i .. ":|r " .. notes[i] , 1 , 1 , 1 );
+        GameTooltip:AddLine ( lineToAdd , 1 , 1 , 1 );
     end
 end
 
@@ -215,7 +234,7 @@ CIN.Trim = function ( text )
 end
 
 -- Method:          CIN.ParseInput ( string )
--- What it Does:    Parses out the command, the new note, and the index 
+-- What it Does:    Parses out the command, the new note, and the index
 -- Purpose:         Ease of handling slash commands for user input.
 CIN.ParseInput= function ( input )
 
@@ -258,10 +277,10 @@ CIN.SlashCommandHelp = function()
 end
 
 -- Slash command logic
-SlashCmdList["CIN"] = function ( input )  
+SlashCmdList["CIN"] = function ( input )
     local errorMsg = "Please type '/cin help' for assistance.";
     local errorMsg2 = "Please mouse over an item first.";
-    
+
     local name = CIN.GetItemNameAndID();
 
     if not input or input == "" then
@@ -299,7 +318,7 @@ SlashCmdList["CIN"] = function ( input )
     elseif command == "clearall" then
         CIN.ClearAllNotes();
 
-    elseif GameTooltip:IsVisible() then 
+    elseif GameTooltip:IsVisible() then
         CIN.AddNote ( input );
 
     else
@@ -312,7 +331,7 @@ end
 -- Purpose:         Important to control load of data to be delayed in some cases.
 CIN.Initialize = function()
     -- Possibly for future use.
-    C_Timer.After ( 2 , CIN.PatchCheck )
+    C_Timer.After ( 1 , CIN.PatchCheck )
 end
 
 -- Method:          CIN.ActivateAddon ( ... , string , string )
@@ -333,10 +352,13 @@ CIN.ActivateAddon = function ( _ , event , addon )
 end
 
 -- New Tooltip handler logic as of 10.0.2
-if TooltipDataProcessor and CIN_G.BuildVersion > 80000 then
-    TooltipDataProcessor.AddTooltipPostCall ( Enum.TooltipDataType.Item , CIN.SetTooltipNote );
-else
-    GameTooltip:HookScript ( "OnTooltipSetItem" , CIN.SetTooltipNote );
+CIN.ToolTipPostCallInitialization = function()
+
+    if C_TooltipInfo then
+        TooltipDataProcessor.AddTooltipPostCall ( Enum.TooltipDataType.Item , CIN.SetTooltipNote );
+    else
+        GameTooltip:HookScript ( "OnTooltipSetItem" , CIN.SetTooltipNote );
+    end
 end
 
 ---------------------

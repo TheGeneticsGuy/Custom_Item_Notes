@@ -1,4 +1,17 @@
+**1.17 Release - July 31st, 2024**
 
+**NEW FEATURES**
+
+* You now have an option to Hold TAB to see the tooltip notes added. They will not appear unless the tab key is pressed.
+
+* Compatibility release for 11.0 Retail, 1.15.3 CE, and Cata
+
+* Adjusted the max wrap to be 50 characters (or to first line space). The 100 characters just made comically long tooltip, particularly if you had large font scale set.
+
+
+**1.16 Release - May 9th, 2024**
+
+* Stealth release - realized a bug that made it so ONLY in the Cata version the notes would not appear due to a backend change by Blizz.
 
 **1.16 Release - May 9th, 2024**
 
