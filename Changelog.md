@@ -1,4 +1,4 @@
-**1.17 Release - July 31st, 2024**
+**1.17 Release - September 5th, 2024**
 
 **NEW FEATURES**
 
