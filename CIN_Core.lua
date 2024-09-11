@@ -166,19 +166,19 @@ CIN.GetItemQuality = function ( id )
     return quality , typeOfItem;
 end
 
--- Quickly parse item ID and name
+-- Quickly parse item ID and name (I don't do anything with item ID as of now.)
 CIN.GetItemNameAndID = function()
-    local link , id = select ( 2 , GameTooltip:GetItem() );
+    local link = select ( 2 , GameTooltip:GetItem() );
     local name;
+    local id;
 
     -- Classic ID will not be give on the GetItem() dump.
-    if not id and link then
-        id = string.match ( link , "|h%[[^%]]+%]" );
-    end
-
-    -- I want it to return nil if no item ID as that would indicate the tooltip is a non-item tooltip So only pulling name if valid.
-    if id and _G["GameTooltipTextLeft1"] then
-        name = _G["GameTooltipTextLeft1"]:GetText();
+    if link then
+        name = GetItemInfo ( link );
+        id = string.match ( link , "|Hitem:(%d+):" );   -- Previous string match matched the link to item, I want the parsed ID
+        if id then
+            id = tonumber (id);
+        end
     end
 
     return name , id;

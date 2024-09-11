@@ -1,6 +1,6 @@
 
 -- FOR MODIFICATIONS TO EXISTING DB
-local version = 1.17;
+local version = 1.18;
 local CIN_Patch = {};
 
 -- Control the flow of future updates.
@@ -21,7 +21,7 @@ CIN.PatchCheck = function()
 
 
     -- -- FUTURE UPDATE TEMPLATE EXAMPLE
-    -- if CIN_Save.VERSION < 1.16 then
+    -- if CIN_Save.VERSION < 1.18 then
     --     updateCount = updateCount + 1;
 
     --     -- Run logic here
