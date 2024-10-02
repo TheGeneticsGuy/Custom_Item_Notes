@@ -175,10 +175,12 @@ CIN.GetItemNameAndID = function()
     -- Classic ID will not be give on the GetItem() dump.
     if link then
         name = GetItemInfo ( link );
-        id = string.match ( link , "|Hitem:(%d+):" );   -- Previous string match matched the link to item, I want the parsed ID
+        id = GetItemInfoInstant( link );
         if id then
             id = tonumber (id);
         end
+
+        print("maybeID: "  .. id)
     end
 
     return name , id;

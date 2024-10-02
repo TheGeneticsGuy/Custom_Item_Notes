@@ -1,3 +1,7 @@
+**1.19 Release - October 2nd, 2024**
+
+* Updated for 1.15.4 Classic Compatibility
+
 **1.18 Release - September 11th, 2024**
 
 * Added a bug fix as the item name was not storing properly in compatibilty with some other addons. This will now pull the item name directly from the server rather than the tooltip, in case of addon modification of the tooltip. This should be universally compatible with any addon now as a result.
