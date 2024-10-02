@@ -1,3 +1,7 @@
+**1.20 Release - October 2nd, 2024**
+
+* Removed the spam from an old test trace I forgot to remove. Should work properly now.
+
 **1.19 Release - October 2nd, 2024**
 
 * Updated for 1.15.4 Classic Compatibility

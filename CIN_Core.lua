@@ -179,8 +179,6 @@ CIN.GetItemNameAndID = function()
         if id then
             id = tonumber (id);
         end
-
-        print("maybeID: "  .. id)
     end
 
     return name , id;
