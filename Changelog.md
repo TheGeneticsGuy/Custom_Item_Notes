@@ -1,3 +1,7 @@
+**1.21 Release - October 22nd, 2024**
+
+*11.0.5 - Retail Compatibility Release for WOW's 20th Anniversary*
+
 **1.20 Release - October 2nd, 2024**
 
 * Removed the spam from an old test trace I forgot to remove. Should work properly now.
