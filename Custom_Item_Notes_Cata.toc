@@ -1,7 +1,7 @@
 
-## Interface: 40400
+## Interface: 40401
 ## Author: Arkaan
-## Version: 1.21
+## Version: 1.22
 ## Title: Custom Item Notes
 ## Notes: Allows the creation of custom notes to be added to the tooltip
 ## SavedVariables: CIN_Save , CIN_Settings

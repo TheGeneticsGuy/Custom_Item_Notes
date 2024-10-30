@@ -1,3 +1,7 @@
+**1.22 Release - October 29th, 2024**
+
+*Compatibility Release for Cata Classic 4.4.1 Update*
+
 **1.21 Release - October 22nd, 2024**
 
 *11.0.5 - Retail Compatibility Release for WOW's 20th Anniversary*
