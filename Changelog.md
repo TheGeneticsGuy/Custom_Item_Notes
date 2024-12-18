@@ -1,3 +1,7 @@
+**1.23 Release - December 18th, 2024**
+
+*Compatibility Release for Retail 11.0.7 and Classic Era 1.15.5*
+
 **1.22 Release - October 29th, 2024**
 
 *Compatibility Release for Cata Classic 4.4.1 Update*
