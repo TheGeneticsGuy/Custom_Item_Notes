@@ -13,7 +13,7 @@ SLASH_CIN1 = '/cin';
 
 ----------------------
 -- SET NOTE LOGIC ----
-----------------------
+--------- -------------
 
 -- Method:          CIN.AddNote ( string , int , int )
 -- What it Does:    Adds the given player input note to the save file
