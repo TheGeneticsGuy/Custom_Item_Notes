@@ -1,3 +1,7 @@
+**1.25 Release - April 22nd, 2025**
+
+*Compatibility Release for Retail 11.1.5*
+
 **1.24 Release -April 13th, 2025**
 
 *Compatibility Release for Classic Era 1.15.7*
