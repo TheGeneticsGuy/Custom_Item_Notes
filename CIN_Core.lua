@@ -462,7 +462,6 @@ CIN.CreateGUI = function()
     CIN.GUIButtonSave:SetPoint("BOTTOMLEFT", 10, 10)
     CIN.GUIButtonSave:SetScript("OnClick", function()
         local list_notes = fun_split_string(CIN.GUIEditBox:GetText(), '\n')
-        CIN.fun_print_r(list_notes, 0, 100, 500)`
         if #list_notes > 0 then
             if not CIN_Save[CIN.GUICurrentName] then
                 CIN_Save[CIN.GUICurrentName] = {};
