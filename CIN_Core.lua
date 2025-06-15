@@ -497,6 +497,10 @@ CIN.CreateGUI = function()
     -- Create frame for hook key press
     CIN.GUIFrameOnKeyPress = CreateFrame("Frame", nil, UIParent)
     CIN.GUIFrameOnKeyPress:SetScript("OnKeyDown", function(self, key)
+            -- Function SetPropagateKeyboardInput() no longer be called by insecure code while in combat.
+            if UnitAffectingCombat('player') then
+                return
+            end
             shiftDown = IsShiftKeyDown()
             ctrlDown  = IsControlKeyDown()
             altDown   = IsAltKeyDown()
