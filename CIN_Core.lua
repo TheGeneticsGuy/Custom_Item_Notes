@@ -331,6 +331,7 @@ end
 -- Purpose:         Important to control load of data to be delayed in some cases.
 CIN.Initialize = function()
     -- Possibly for future use.
+    CIN.CreateGUI()
     C_Timer.After ( 1 , CIN.PatchCheck )
 end
 
@@ -384,9 +385,157 @@ CIN.DeepCopyArray = function( tableToCopy )
     return copy;
 end
 
+-- Method:          CIN.CreateGUI()
+-- What it Does:    Create GUI-interface for editing notes. Empty lines are used as the delimiter between notes lines.
+-- Purpose:         -
+CIN.CreateGUI = function()
+    -- Special split string
+    -- In fact, delimiter is removed. Empty lines are used as the actual delimiter.
+    -- This is done because in the editor, due to the poorly visible line breaks, it is impossible to distinguish between several short lines and one long line with breaks.
+    function split_string(s, delimiter)
+        local result = { }
+        local from = 1
+        local current_string = ''
+        local united_string = ''
+        local delim_from, delim_to = string.find(s, delimiter, from)
+        while delim_from do
+            current_string = string.sub(s, from, delim_from - 1)
+            if current_string == '' then
+                if united_string ~= '' then
+                    table.insert(result, united_string)
+                    united_string = ''
+                end
+            else
+                united_string = united_string .. current_string
+            end
+            from  = delim_to + 1
+            delim_from, delim_to = string.find(s, delimiter, from)
+        end
+        current_string = string.sub(s, from)
+        if current_string ~= '' then
+            united_string = united_string .. current_string
+        end
+        if united_string ~= '' then
+            table.insert(result, united_string)
+        end
+        return result
+    end
+
+    -- Create base frame
+    -- CIN.GUIFrame = CreateFrame("Frame", nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
+    CIN.GUIFrame = CreateFrame("Frame", nil, UIParent, "BasicFrameTemplateWithInset")
+    CIN.GUIFrame.TitleBg:SetHeight(30)
+    CIN.GUIFrame.title = CIN.GUIFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    CIN.GUIFrame.title:SetPoint("TOPLEFT", CIN.GUIFrame.TitleBg, "TOPLEFT", 5, -3)
+    CIN.GUIFrame.title:SetText("CIN Editor")
+    CIN.GUIFrame:SetSize(500, 500)
+    CIN.GUIFrame:SetPoint("CENTER")
+    CIN.GUIFrame:EnableMouse(true)
+    CIN.GUIFrame:SetMovable(true)
+    CIN.GUIFrame:RegisterForDrag("LeftButton")
+    CIN.GUIFrame:SetScript("OnDragStart", CIN.GUIFrame.StartMoving)
+    CIN.GUIFrame:SetScript("OnDragStop", CIN.GUIFrame.StopMovingOrSizing)
+    CIN.GUIFrame:SetScript("OnHide", CIN.GUIFrame.StopMovingOrSizing)
+    CIN.GUIFrame:Hide()
+
+    -- Create frame for scrolling EditText
+    CIN.GUIFrameScroll = CreateFrame("ScrollFrame", nil, CIN.GUIFrame, "UIPanelScrollFrameTemplate")
+    CIN.GUIFrameScroll:SetSize(450, 450)
+    CIN.GUIFrameScroll:SetPoint("TOPLEFT", 10, -33)
+    CIN.GUIFrameScroll:SetPoint('BOTTOMRIGHT', CIN.GUIFrame, 'BOTTOMRIGHT', -30, 40)
+
+    -- Create EditText for editing notes
+    CIN.GUIEditBox = CreateFrame("EditBox", nil, CIN.GUIFrame)
+    CIN.GUIEditBox:SetMultiLine(true)
+    CIN.GUIEditBox:SetAutoFocus(true)
+    CIN.GUIEditBox:SetFontObject(ChatFontNormal)
+    CIN.GUIEditBox:SetWidth(450)
+    CIN.GUIEditBox:SetHeight(450)
+    CIN.GUIEditBox:SetText("")
+    CIN.GUIEditBox:SetCursorPosition(0)
+    CIN.GUIFrameScroll:SetScrollChild(CIN.GUIEditBox)
+
+    -- Create button for accept changes
+    CIN.GUIButtonSave = CreateFrame("Button", nil, CIN.GUIFrame, "UIPanelButtonTemplate")
+    CIN.GUIButtonSave:SetSize(80, 22) -- width, height
+    CIN.GUIButtonSave:SetText("Save")
+    CIN.GUIButtonSave:SetPoint("BOTTOMLEFT", 10, 10)
+    CIN.GUIButtonSave:SetScript("OnClick", function()
+        local list_notes = split_string(CIN.GUIEditBox:GetText(), '\n')
+        if #list_notes > 0 then
+            if not CIN_Save[CIN.GUICurrentName] then
+                CIN_Save[CIN.GUICurrentName] = {};
+                CIN_Save[CIN.GUICurrentName].itemID = tonumber(CIN.GUICurrentId);
+            end
+            local len_current_saves = #CIN_Save[CIN.GUICurrentName]
+            for i = 1, len_current_saves do
+                table.remove(CIN_Save[CIN.GUICurrentName])
+            end
+            for i = 1, #list_notes do
+                CIN.AddNote(list_notes[i], nil, CIN.GUICurrentName)
+            end
+        else
+            CIN_Save[CIN.GUICurrentName] = nil
+        end
+        CIN.GUIFrame:Hide()
+    end)
+    
+    -- Create button for cancel changes
+    CIN.GUIButtonCancel = CreateFrame("Button", nil, CIN.GUIFrame, "UIPanelButtonTemplate")
+    CIN.GUIButtonCancel:SetSize(80 ,22) -- width, height
+    CIN.GUIButtonCancel:SetText("Cancel")
+    CIN.GUIButtonCancel:SetPoint("BOTTOMLEFT", 100, 10)
+    CIN.GUIButtonCancel:SetScript("OnClick", function()
+        CIN.GUIFrame:Hide()
+    end)
+
+    -- Current name item
+    CIN.GUICurrentName = nil
+    -- Current id item
+    CIN.GUICurrentId = nil
+
+    -- Create frame for hook key press
+    CIN.GUIFrameOnKeyPress = CreateFrame("Frame", nil, UIParent)
+    CIN.GUIFrameOnKeyPress:SetScript("OnKeyDown", function(self, key)
+            -- Function SetPropagateKeyboardInput() no longer be called by insecure code while in combat.
+            if UnitAffectingCombat('player') then
+                return
+            end
+            shiftDown = IsShiftKeyDown()
+            ctrlDown  = IsControlKeyDown()
+            altDown   = IsAltKeyDown()
+            -- Hardcoded key
+            if (key == "A") and not shiftDown and ctrlDown and altDown then
+                local name;
+                local itemID;
+                name, itemID = CIN.GetItemNameAndID();
+                
+                if name then
+                    name = tostring(name)
+                    CIN.GUICurrentName = name
+                    CIN.GUICurrentId = itemID
+                    local tooltip_strings = ''
+                    local current_string_note = ''
+                    if CIN_Save[name] then
+                        for i = 1 , #CIN_Save[name] do
+                            current_string_note = CIN_Save[name][i]:gsub('\n', '')
+                            tooltip_strings = tooltip_strings .. current_string_note .. '\n\n'
+                        end
+                    end
+                    CIN.GUIEditBox:SetText(tooltip_strings)
+                    CIN.GUIFrame.title:SetText("CIN Editor: " .. tostring(itemID) .. ' | ' .. name)
+                    CIN.GUIFrame:Show()
+                    CIN.GUIFrameOnKeyPress:SetPropagateKeyboardInput(false)
+                else
+                    CIN.GUIFrameOnKeyPress:SetPropagateKeyboardInput(true)
+                end
+            else
+                CIN.GUIFrameOnKeyPress:SetPropagateKeyboardInput(true)
+            end
+    end)
+end
+
 -- Initialize the first frames as game is being loaded.
 CIN.Initialization = CreateFrame ( "Frame" );
 CIN.Initialization:RegisterEvent ( "ADDON_LOADED" );
 CIN.Initialization:SetScript ( "OnEvent" , CIN.ActivateAddon );
-
-
