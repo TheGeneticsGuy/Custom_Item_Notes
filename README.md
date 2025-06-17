@@ -27,7 +27,19 @@ Key Points:
 
 * /cin clearall
 
+* /cin help
+
 *Again, note, the |x position is optional and the default will just add or remove from the bottom.*
 
 
 ![Tooltip Example](https://i.imgur.com/uaEtEx1.jpg)
+
+**NOTE EDITOR**
+
+* Edit Notes
+* Remove Notes
+* Add Notes
+
+*Just add a new line to add a new note*
+
+![CIN Editor](https://i.imgur.com/kprawT3.jpeg)

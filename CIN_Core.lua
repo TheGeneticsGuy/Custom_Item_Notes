@@ -268,12 +268,16 @@ end
 -- What it Does:    Builds the help printout for addon slash commands
 -- Purpose:         Easily access the help commands.
 CIN.SlashCommandHelp = function()
-    print ( "\n|CFF1DC5D3Custom Item Notes:" );
+    print( "\n|CFFFFD100Custom Item Notes - Slash Commands:" );
     print( "/cin <Insert any note here> - You must be mousing over the item" );
     print( "/cin add <Insert Any Note Here> |x - Add a new note at \"x\" position. X=any number." );
     print( "/cin edit <Insert Any Note Here> |x - Edit note at \"x\" position. X=any number." );
     print( "/cin del |x - Del note at \"x\" position. X not required. Default is last note." );
     print( "/cin clearall - Clears all notes of the given item." );
+    print(" ");
+    print("Note Editor:")
+    print("Press \'CTRL-ALT-A\' whilst hovering over an item to open the CIN note editor.")
+    print(" ")
 end
 
 -- Slash command logic
@@ -479,7 +483,7 @@ CIN.CreateGUI = function()
         end
         CIN.GUIFrame:Hide()
     end)
-    
+
     -- Create button for cancel changes
     CIN.GUIButtonCancel = CreateFrame("Button", nil, CIN.GUIFrame, "UIPanelButtonTemplate")
     CIN.GUIButtonCancel:SetSize(80 ,22) -- width, height
@@ -497,41 +501,42 @@ CIN.CreateGUI = function()
     -- Create frame for hook key press
     CIN.GUIFrameOnKeyPress = CreateFrame("Frame", nil, UIParent)
     CIN.GUIFrameOnKeyPress:SetScript("OnKeyDown", function(self, key)
-            -- Function SetPropagateKeyboardInput() no longer be called by insecure code while in combat.
-            if UnitAffectingCombat('player') then
-                return
-            end
-            shiftDown = IsShiftKeyDown()
-            ctrlDown  = IsControlKeyDown()
-            altDown   = IsAltKeyDown()
-            -- Hardcoded key
-            if (key == "A") and not shiftDown and ctrlDown and altDown then
-                local name;
-                local itemID;
-                name, itemID = CIN.GetItemNameAndID();
-                
-                if name then
-                    name = tostring(name)
-                    CIN.GUICurrentName = name
-                    CIN.GUICurrentId = itemID
-                    local tooltip_strings = ''
-                    local current_string_note = ''
-                    if CIN_Save[name] then
-                        for i = 1 , #CIN_Save[name] do
-                            current_string_note = CIN_Save[name][i]:gsub('\n', '')
-                            tooltip_strings = tooltip_strings .. current_string_note .. '\n\n'
-                        end
+        -- Function SetPropagateKeyboardInput() no longer be called by insecure code while in combat.
+        if UnitAffectingCombat('player') then
+            return
+        end
+        shiftDown = IsShiftKeyDown()
+        ctrlDown  = IsControlKeyDown()
+        altDown   = IsAltKeyDown()
+
+        -- Hardcoded key
+        if (key == "A") and not shiftDown and ctrlDown and altDown then
+            local name;
+            local itemID;
+            name, itemID = CIN.GetItemNameAndID();
+
+            if name then
+                name = tostring(name)
+                CIN.GUICurrentName = name
+                CIN.GUICurrentId = itemID
+                local tooltip_strings = ''
+                local current_string_note = ''
+                if CIN_Save[name] then
+                    for i = 1 , #CIN_Save[name] do
+                        current_string_note = CIN_Save[name][i]:gsub('\n', '')
+                        tooltip_strings = tooltip_strings .. current_string_note .. '\n\n'
                     end
-                    CIN.GUIEditBox:SetText(tooltip_strings)
-                    CIN.GUIFrame.title:SetText("CIN Editor: " .. tostring(itemID) .. ' | ' .. name)
-                    CIN.GUIFrame:Show()
-                    CIN.GUIFrameOnKeyPress:SetPropagateKeyboardInput(false)
-                else
-                    CIN.GUIFrameOnKeyPress:SetPropagateKeyboardInput(true)
                 end
+                CIN.GUIEditBox:SetText(tooltip_strings)
+                CIN.GUIFrame.title:SetText("CIN Editor: " .. tostring(itemID) .. ' | ' .. name)
+                CIN.GUIFrame:Show()
+                CIN.GUIFrameOnKeyPress:SetPropagateKeyboardInput(false)
             else
                 CIN.GUIFrameOnKeyPress:SetPropagateKeyboardInput(true)
             end
+        else
+            CIN.GUIFrameOnKeyPress:SetPropagateKeyboardInput(true)
+        end
     end)
 end
 

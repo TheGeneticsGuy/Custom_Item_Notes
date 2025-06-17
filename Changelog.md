@@ -1,3 +1,23 @@
+**1.27 Release - June 17th, 2025**
+
+*Compatibility Release for Retail 11.1.7*
+
+**UI UPDATE**
+
+*This UI was built by @jc7ldw8 on and PR on Github - Thanks*
+
+**NOTE EDITOR**
+
+* Edit Notes
+* Remove Notes
+* Add Notes
+
+*Just add a new line to add a new note*
+
+![CIN Editor](https://i.imgur.com/kprawT3.jpeg)
+
+![CIN Help Update](https://i.imgur.com/DCRD8Dn.jpeg)
+
 **1.26 Release - April 22nd, 2025**
 
 *Compatibility Release for Retail 11.1.5*
