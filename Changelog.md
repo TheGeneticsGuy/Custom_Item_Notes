@@ -1,3 +1,9 @@
+**1.28 Release - July 21st, 2025**
+
+*Compatibility with MOP Classic Release*
+
+*Compatibility Release for Retail 11.1.7*
+
 **1.27 Release - June 17th, 2025**
 
 *Compatibility Release for Retail 11.1.7*

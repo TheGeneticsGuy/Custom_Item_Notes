@@ -1,8 +1,8 @@
 
-## Interface: 40402
+## Interface: 50500
 
 ## Author: Arkaan
-## Version: 1.27
+## Version: 1.28
 ## Title: Custom Item Notes
 ## Notes: Allows the creation of custom notes to be added to the tooltip
 ## Category: Tooltip
