@@ -1,6 +1,6 @@
 
 -- FOR MODIFICATIONS TO EXISTING DB
-local version = 1.27;
+local version = 1.29;
 local CIN_Patch = {};
 
 -- Control the flow of future updates.

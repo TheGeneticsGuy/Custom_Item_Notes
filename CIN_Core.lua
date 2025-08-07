@@ -497,47 +497,70 @@ CIN.CreateGUI = function()
     CIN.GUICurrentName = nil
     -- Current id item
     CIN.GUICurrentId = nil
+    -- Combat Status
+    CIN.inCombat = false;
 
     -- Create frame for hook key press
     CIN.GUIFrameOnKeyPress = CreateFrame("Frame", nil, UIParent)
+    CIN.GUIFrameOnKeyPress:Hide();
     CIN.GUIFrameOnKeyPress:SetScript("OnKeyDown", function(self, key)
         -- Function SetPropagateKeyboardInput() no longer be called by insecure code while in combat.
-        if UnitAffectingCombat('player') then
-            return
-        end
-        shiftDown = IsShiftKeyDown()
-        ctrlDown  = IsControlKeyDown()
-        altDown   = IsAltKeyDown()
+        if not CIN.inCombat then
+            shiftDown = IsShiftKeyDown()
+            ctrlDown  = IsControlKeyDown()
+            altDown   = IsAltKeyDown()
 
-        -- Hardcoded key
-        if (key == "A") and not shiftDown and ctrlDown and altDown then
-            local name;
-            local itemID;
-            name, itemID = CIN.GetItemNameAndID();
+            -- Hardcoded key
+            if (key == "A") and not shiftDown and ctrlDown and altDown then
+                local name;
+                local itemID;
+                name, itemID = CIN.GetItemNameAndID();
 
-            if name then
-                name = tostring(name)
-                CIN.GUICurrentName = name
-                CIN.GUICurrentId = itemID
-                local tooltip_strings = ''
-                local current_string_note = ''
-                if CIN_Save[name] then
-                    for i = 1 , #CIN_Save[name] do
-                        current_string_note = CIN_Save[name][i]:gsub('\n', '')
-                        tooltip_strings = tooltip_strings .. current_string_note .. '\n\n'
+                if name then
+                    name = tostring(name)
+                    CIN.GUICurrentName = name
+                    CIN.GUICurrentId = itemID
+                    local tooltip_strings = ''
+                    local current_string_note = ''
+                    if CIN_Save[name] then
+                        for i = 1 , #CIN_Save[name] do
+                            current_string_note = CIN_Save[name][i]:gsub('\n', '')
+                            tooltip_strings = tooltip_strings .. current_string_note .. '\n\n'
+                        end
                     end
+                    CIN.GUIEditBox:SetText(tooltip_strings)
+                    CIN.GUIFrame.title:SetText("CIN Editor: " .. tostring(itemID) .. ' | ' .. name)
+                    CIN.GUIFrame:Show()
+                    CIN.GUIFrameOnKeyPress:SetPropagateKeyboardInput(false)
+                else
+                    CIN.GUIFrameOnKeyPress:SetPropagateKeyboardInput(true)
                 end
-                CIN.GUIEditBox:SetText(tooltip_strings)
-                CIN.GUIFrame.title:SetText("CIN Editor: " .. tostring(itemID) .. ' | ' .. name)
-                CIN.GUIFrame:Show()
-                CIN.GUIFrameOnKeyPress:SetPropagateKeyboardInput(false)
             else
                 CIN.GUIFrameOnKeyPress:SetPropagateKeyboardInput(true)
             end
-        else
-            CIN.GUIFrameOnKeyPress:SetPropagateKeyboardInput(true)
         end
     end)
+
+    -- PLAYER STATUS MAINTENANCE FOR INCOMBAT/OUTOFCOMBAT STATUS
+    CIN.StatusChecking = CreateFrame("Frame", nil, UIParent)
+    CIN.StatusChecking:RegisterEvent("PLAYER_REGEN_ENABLED");
+    CIN.StatusChecking:RegisterEvent("PLAYER_REGEN_DISABLED");
+    CIN.StatusChecking:SetScript("OnEvent", function(_, event)
+        if event == "PLAYER_REGEN_ENABLED" then
+            CIN.inCombat = false;
+            CIN.GUIFrameOnKeyPress:Show();
+
+        elseif event == "PLAYER_REGEN_DISABLED" then
+            CIN.inCombat = true;
+            CIN.GUIFrameOnKeyPress:Hide();
+        end
+    end);
+
+    if not CIN.inCombat then
+        CIN.GUIFrameOnKeyPress:Show();
+    end
+
+
 end
 
 -- Initialize the first frames as game is being loaded.

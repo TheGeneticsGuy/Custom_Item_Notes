@@ -1,3 +1,11 @@
+**1.29 Release - August 6th, 2025**
+
+*Compatibility Release for Retail 11.2*
+
+***BUG FIXES***
+
+* The addon would eat your keystrokes if you ended up in combat after a reload. This will no longer occur. Sorry about that! Bug of the Ctrl-Alt-A (when mouseover of an item) note edit window.
+
 **1.28 Release - July 21st, 2025**
 
 *Compatibility with MOP Classic Release*
