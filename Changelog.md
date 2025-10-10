@@ -1,3 +1,7 @@
+**1.30 Release - October 10th, 2025**
+
+*Compatibility Release for Retail 11.2.5*
+
 **1.29 Release - August 6th, 2025**
 
 *Compatibility Release for Retail 11.2*
