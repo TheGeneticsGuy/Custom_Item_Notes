@@ -1,3 +1,7 @@
+**1.30 Release - October 20th, 2025**
+
+*Compatibility Release for Classic MOP 5.5.1*
+
 **1.30 Release - October 10th, 2025**
 
 *Compatibility Release for Retail 11.2.5*
