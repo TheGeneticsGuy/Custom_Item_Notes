@@ -1,3 +1,7 @@
+**1.32 Release - November 4th, 2025**
+
+*Compatibility Release for Classic MOP 5.5.2 and Classic Era 1.15.8*
+
 **1.31 Release - October 20th, 2025**
 
 *Compatibility Release for Classic MOP 5.5.1*
