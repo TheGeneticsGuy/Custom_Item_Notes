@@ -1,6 +1,11 @@
+**1.34 Release - December 29th, 2025**
+
+*Compatibility Release for Classic Mop 5.5.3*
+
+
 **1.33 Release - December 2nd, 2025**
 
-*Compatibility Releease for 11.2.7*
+*Compatibility Release for 11.2.7*
 
 **1.32 Release - November 4th, 2025**
 
