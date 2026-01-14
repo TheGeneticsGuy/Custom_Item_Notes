@@ -1,7 +1,10 @@
+**1.34 Release - January 14th, 2025**
+
+*Compatibility Release for TBC Anniversary 2.5.5*
+
 **1.34 Release - December 29th, 2025**
 
 *Compatibility Release for Classic Mop 5.5.3*
-
 
 **1.33 Release - December 2nd, 2025**
 
