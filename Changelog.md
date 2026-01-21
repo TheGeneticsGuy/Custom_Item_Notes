@@ -1,4 +1,8 @@
-**1.34 Release - January 14th, 2025**
+**1.36 Release - January 20th, 2025**
+
+*Compatibility Release for Midnight 12.0.0*
+
+**1.35 Release - January 14th, 2025**
 
 *Compatibility Release for TBC Anniversary 2.5.5*
 
