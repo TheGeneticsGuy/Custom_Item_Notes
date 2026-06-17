@@ -1,3 +1,7 @@
+**1.38 Release - June 17th, 2026**
+
+*Compatibility Release for Midnight 12.0.7*
+
 **1.38 Release - April 21st, 2026**
 
 *Compatibility Release for Midnight 12.0.5*
