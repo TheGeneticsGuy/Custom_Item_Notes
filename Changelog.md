@@ -1,3 +1,7 @@
+**1.40 Release - August 13th, 2026**
+
+*Compatibility Release for Midnight 12.1, TBC Anniversary 2.5.6, and Classic Era 1.15.9*
+
 **1.39 Release - June 17th, 2026**
 
 *Compatibility Release for Midnight 12.0.7*
