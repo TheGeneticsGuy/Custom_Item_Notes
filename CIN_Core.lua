@@ -162,7 +162,7 @@ end
 -- NOTE LOADING LOGIC
 ----------------------
 CIN.GetItemQuality = function ( id )
-    quality , _ , _ , typeOfItem = select ( 3 , GetItemInfo( id ) );
+    quality , _ , _ , typeOfItem = select ( 3 , C_Item.GetItemInfo( id ) );
     return quality , typeOfItem;
 end
 
@@ -174,8 +174,8 @@ CIN.GetItemNameAndID = function()
 
     -- Classic ID will not be give on the GetItem() dump.
     if link then
-        name = GetItemInfo ( link );
-        id = GetItemInfoInstant( link );
+        name = C_Item.GetItemInfo ( link );
+        id = C_Item.GetItemInfoInstant( link );
         if id then
             id = tonumber (id);
         end
@@ -210,6 +210,10 @@ CIN.BuildTooltip = function ( notes )
     end
 
     local line = _G["GameTooltipTextLeft" .. GameTooltip:NumLines() ]:GetText();
+    if CIN.IsSecretValue(line) then
+        return  -- Kill it if secret protected
+    end
+
     local lastLine = "|CFF1DC5D3Note" .. #notes .. ":|r " .. notes[#notes];
     local lineToAdd = "";
 
@@ -387,6 +391,15 @@ CIN.DeepCopyArray = function( tableToCopy )
         copy = tableToCopy;         -- Imported data was not a table... just return orig. value - error protection
     end
     return copy;
+end
+
+-- Method:          CIN.IsSecretValue(Any)
+-- What it Does:    Returns true/false if value is a secret value as introduced by Blizz in 12.0
+CIN.IsSecretValue = function(value)
+    if issecretvalue and issecretvalue(value) then
+        return true
+    end
+    return false
 end
 
 -- Method:          CIN.CreateGUI()

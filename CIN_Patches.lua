@@ -59,10 +59,10 @@ CIN_Patch.ConvertDBEntriesToStrings = function( repeatedCount )
 
             if #CIN_Save[id] > 0 then
 
-                local name = GetItemInfo ( itemID );
+                local name = C_Item.GetItemInfo ( itemID );
                 -- Call it a 2nd time. For some reason, in some cases, the client does not provide a response until the 2nd call.
                 if not name then
-                    name = GetItemInfo ( itemID );
+                    name = C_Item.GetItemInfo ( itemID );
                 end
 
                 if name then

@@ -1,3 +1,9 @@
+**1.41 Release - October 15th, 2026**
+
+*Compatibility Release for 12.1.5*
+
+* Fixed a bug with secret values as Blizz will not allow custom tooltip generation in combat or certain protected PVP
+
 **1.40 Release - August 13th, 2026**
 
 *Compatibility Release for Midnight 12.1, TBC Anniversary 2.5.6, and Classic Era 1.15.9*
