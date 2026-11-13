@@ -5,6 +5,7 @@
 ## Title: Custom Item Notes
 ## Notes: Allows the creation of custom notes to be added to the tooltip
 ## Category: Tooltip
+## IconTexture: Interface\AddOns\Custom_Item_Notes\Media\icons\logo_64x64.png
 
 ## SavedVariables: CIN_Save , CIN_Settings
 
