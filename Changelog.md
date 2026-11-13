@@ -12,6 +12,8 @@
 
 * `Ctrl-Alt-A` during mouseover will directly open the item in the new Editor
 
+* .toc file now has an icon reference.
+
 **1.41 Release - October 15th, 2026**
 
 *Compatibility Release for 12.1.5*
