@@ -3,11 +3,10 @@ CIN_Settings = CIN_Settings or {};
 
 -- Create a frame for your options panel
 local addonName = "Custom Item Notes";
-local defaultFont = "Blizz FrizQT";
 
 -- Create a frame for your options panel
-local MyAddonPanel = CreateFrame("Frame", addonName .. "OptionsPanel", InterfaceOptionsFramePanelContainer)
-MyAddonPanel.name = "Custom Item Notes" -- The name shown in the AddOns list
+local MyAddonPanel = CreateFrame ( "Frame" , addonName .. "OptionsPanel" , InterfaceOptionsFramePanelContainer );
+MyAddonPanel.name = "Custom Item Notes"; -- The name shown in the AddOns list
 MyAddonPanel.settingsConfigured = false;
 
 -----------------------------
@@ -24,7 +23,7 @@ CIN.S = function()
 end
 
 -- Method:          UI.NormalizeHitRects ( button , fontstring , int , bool )
--- What it Does:    It ensures that no matter what the localization/translation, the hitRects mnatch up to the text length perfectly
+-- What it Does:    It ensures that no matter what the localization/translation, the hitRects match up to the text length perfectly
 -- Purpose:         Quality of life
 UI.NormalizeHitRects = function ( checkButton , checkButtonFontstring , modifier , reverse )
     local n = modifier or 0;
@@ -39,9 +38,9 @@ end
 -- Method:          UI.CreateCheckBox ( string , frame , string , array , array , function , string , string , int , function , function , bool , dbVar )
 -- What it Does:    Builds out a new checkbox
 -- Purpose:         Cleanup code with reusable tool.
-UI.CreateCheckBox = function ( name , parentFrame , template , size , points, buttonScript , text , textTemplate , fontSize , toolTipScript , toolTipClearScript , initialValue , settingsName )
+UI.CreateCheckBox = function ( name , parentFrame , template , size , points , buttonScript , text , textTemplate , fontSize , toolTipScript , toolTipClearScript , initialValue , settingsName )
 
-    local fontStringText = name.."Text";
+    local fontStringText = name .. "Text";
 
     if not parentFrame[name] then
         local checkBoxTemplate = template or "InterfaceOptionsCheckButtonTemplate";
@@ -56,28 +55,28 @@ UI.CreateCheckBox = function ( name , parentFrame , template , size , points, bu
         end
         parentFrame[name]:SetPoint ( points[1] , points[2] , points[3] , points[4] , points[5] );
 
-        parentFrame[name][fontStringText] = parentFrame[name]:CreateFontString ( nil , "OVERLAY" , textTemplate );
+        parentFrame[name][fontStringText] = parentFrame[name]:CreateFontString ( nil , "OVERLAY" , textTemplate or "GameFontNormal" );
         parentFrame[name][fontStringText]:SetPoint ( "LEFT" , parentFrame[name] , "RIGHT" , 2 , 0 );
         parentFrame[name][fontStringText]:SetWordWrap ( false );
         parentFrame[name][fontStringText]:SetJustifyH ( "LEFT" );
 
-        parentFrame[name]:SetScript ( "OnClick" , function( self , button )
+        parentFrame[name]:SetScript ( "OnClick" , function ( self , button )
             if button == "LeftButton" then
                 self.value = self:GetChecked();
                 if settingsName and CIN_Settings[settingsName] ~= nil then  -- Must be explicit, not truthy here on the ~= nil, in case the setting val is a boolean.
                     CIN_Settings[settingsName] = self.value;
                 end
                 if buttonScript then
-                    buttonScript( self );
+                    buttonScript ( self );
                 end
             end
-        end);
+        end );
 
         -- SCRIPTS
         if toolTipScript then
-            parentFrame[name]:SetScript ( "OnEnter" , function( self )
-                toolTipScript( self );
-            end);
+            parentFrame[name]:SetScript ( "OnEnter" , function ( self )
+                toolTipScript ( self );
+            end );
 
             parentFrame[name]:SetScript ( "OnLeave" , function()
                 if toolTipClearScript then
@@ -85,13 +84,19 @@ UI.CreateCheckBox = function ( name , parentFrame , template , size , points, bu
                 else
                     GameTooltip:Hide();
                 end
-            end);
+            end );
         end
 
     end
 
     parentFrame[name][fontStringText]:SetText ( text );
-    parentFrame[name][fontStringText]:SetFont ( defaultFont , fontSize );
+
+    -- Safely scale the existing font from the template rather than passing an invalid font path string
+    local fontPath , _ , fontFlags = parentFrame[name][fontStringText]:GetFont();
+    if fontPath and fontSize then
+        parentFrame[name][fontStringText]:SetFont ( fontPath , fontSize , fontFlags );
+    end
+
     UI.NormalizeHitRects ( parentFrame[name] , parentFrame[name][fontStringText] );
 end
 
@@ -99,22 +104,41 @@ end
 -- BUILD THE SETTINGS INTERFACE --
 ----------------------------------
 
-MyAddonPanel:HookScript ( "OnShow" , function( self )
+MyAddonPanel:HookScript ( "OnShow" , function ( self )
     if not self.settingsConfigured then
-        local title = MyAddonPanel:CreateFontString( nil, "ARTWORK", "GameFontNormalLarge")
-        title:SetPoint("TOPLEFT", 16, -16)
-        title:SetText(addonName);
-        -- Checkbox
-        UI.CreateCheckBox ( "CIN_HiddenHotKey" , MyAddonPanel , nil , nil , { "TOPLEFT" , title , "BOTTOMLEFT" , 0 , -15 } , nil , "Hold TAB to see notes" , "GameFontNormal" , 11 , nil , nil , CIN_Settings.keyToSee , "keyToSee" );
+        local title = MyAddonPanel:CreateFontString ( nil , "ARTWORK" , "GameFontNormalLarge" );
+        title:SetPoint ( "TOPLEFT" , 16 , -16 );
+        title:SetText ( addonName );
+
+        -- Checkbox: Hold TAB to see notes
+        UI.CreateCheckBox ( "CIN_HiddenHotKey" , MyAddonPanel , nil , nil , { "TOPLEFT" , title , "BOTTOMLEFT" , 0 , -15 } , nil , "Hold TAB to see notes" , "GameFontNormal" , 12 , nil , nil , CIN_Settings.keyToSee , "keyToSee" );
+
+        -- Button: Open Note Manager Window
+        local openManagerBtn = CreateFrame ( "Button" , nil , MyAddonPanel , "UIPanelButtonTemplate" );
+        openManagerBtn:SetSize ( 160 , 26 );
+        openManagerBtn:SetPoint ( "TOPLEFT" , MyAddonPanel["CIN_HiddenHotKey"] , "BOTTOMLEFT" , 0 , -20 );
+        openManagerBtn:SetText ( "Open Note Manager" );
+        openManagerBtn:SetScript ( "OnClick" , function()
+            if HideUIPanel and SettingsPanel and SettingsPanel:IsShown() then
+                HideUIPanel ( SettingsPanel );
+            elseif InterfaceOptionsFrame and InterfaceOptionsFrame:IsShown() then
+                InterfaceOptionsFrame:Hide();
+            end
+            CIN.ToggleGUI();
+        end );
+
+        -- Button: Print Slash Command Help
+        local helpBtn = CreateFrame ( "Button" , nil , MyAddonPanel , "UIPanelButtonTemplate" );
+        helpBtn:SetSize ( 160 , 26 );
+        helpBtn:SetPoint ( "LEFT" , openManagerBtn , "RIGHT" , 12 , 0 );
+        helpBtn:SetText ( "Print Slash Commands" );
+        helpBtn:SetScript ( "OnClick" , function()
+            CIN.SlashCommandHelp();
+        end );
+
         self.settingsConfigured = true;
     end
-end);
-
-
-
-
-
-
+end );
 
 -------------------------
 -- FINAL CONFIGURATION --
@@ -136,11 +160,10 @@ end
 MySettings.InitializeSettings = function()
 
     if InterfaceOptions_AddCategory then
-        InterfaceOptions_AddCategory(MyAddonPanel)
+        InterfaceOptions_AddCategory ( MyAddonPanel );
     else
-        local category, layout = Settings.RegisterCanvasLayoutCategory(MyAddonPanel, MyAddonPanel.name);
-        Settings.RegisterAddOnCategory(category);
-        -- CIN_Settings.settingsCategory = category
+        local category , layout = Settings.RegisterCanvasLayoutCategory ( MyAddonPanel , MyAddonPanel.name );
+        Settings.RegisterAddOnCategory ( category );
     end
 
     -- Load settings
@@ -149,4 +172,3 @@ MySettings.InitializeSettings = function()
     CIN.ToolTipPostCallInitialization();
 
 end
-

@@ -1,3 +1,17 @@
+**1.42 Release - November 12th, 2026**
+
+***WOW Forever Compatibility Release***
+
+***NEW FEATURE***
+
+**Updated UI - New Item interface with search**
+
+* Ability to search
+
+* See the actual items directly
+
+* `Ctrl-Alt-A` during mouseover will directly open the item in the new Editor
+
 **1.41 Release - October 15th, 2026**
 
 *Compatibility Release for 12.1.5*
